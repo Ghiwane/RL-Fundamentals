@@ -15,7 +15,7 @@ class GridWorld():
         """Reset the environment state for a new episode."""
         self.agent_pos = self.start_pos.copy()      # Create a independent copy of starting position
         self.step_count = 0                         # Reset step counter to zero
-        return self.agent_pos                       # Return initial observation
+        return tuple(self.agent_pos)                       # Return initial observation
 
     def move(self, new_pos):
         """Evaluate movement validity, update state, and return (state, reward, done)."""
@@ -47,7 +47,7 @@ class GridWorld():
             if self.step_count >= 100:
                 done = True                         # End episode if max step limit reached
 
-        return self.agent_pos, reward, done
+        return tuple(self.agent_pos), reward, done
 
     def step(self, action):
         """Execute action, map it to grid coordinates, and trigger move logic."""
