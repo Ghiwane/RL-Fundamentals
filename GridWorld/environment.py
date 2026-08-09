@@ -6,7 +6,7 @@ class GridWorld():
         self.size = size                            # Grid size (5x5 by default)
         self.start_pos = [0, 0]                     # Starting coordinates of the agent
         self.goal_pos = [4, 4]                      # Target destination coordinates
-        self.walls = [[1, 1], [2, 2], [4, 2], [3, 4]] # List of non-traversable obstacle coordinates
+        self.walls = [[3, 1], [3, 2], [3, 3], [3, 4]] # List of non-traversable obstacle coordinates
         self.step_count = 0                         # Counter for current episode steps
         self.agent_pos = None                       # Current position of the agent
         self.reset()                                # Initialize state upon instantiation
