@@ -42,9 +42,9 @@ rolling_avg = np.convolve(episode_rewards, np.ones(window_size) / window_size, m
 plt.plot(range(window_size - 1, episodes), rolling_avg, color='blue', linewidth=2, label=f'Moyenne glissante ({window_size} épisodes)')
 
 # Configure plot title, axis labels, reference line, legend, and grid
-plt.title('Entraînement Q-Learning - GridWorld')
-plt.xlabel('Épisode')
-plt.ylabel('Récompense totale')
+plt.title('Training Q-Learning - GridWorld')
+plt.xlabel('Episode')
+plt.ylabel('Total Reward')
 plt.axhline(y=3, color='r', linestyle='--', alpha=0.5)  # Reference benchmark line
 plt.legend()
 plt.grid(True, linestyle=':', alpha=0.6)
