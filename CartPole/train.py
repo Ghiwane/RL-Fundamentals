@@ -41,7 +41,7 @@ for i in range(episodes):
     if i % 200 == 0:
             print(f'Episode : {i} | Reward : {total_rewards} | Current epsilon : {agent.eps}')
 
-    if i % 200 == 0:  # ou une autre condition pour ne pas spammer
+    if i % 200 == 0:
         print(f"Loss: {loss}")
 
 torch.save(agent.q_network.state_dict(), "trained_model.pth")
