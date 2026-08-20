@@ -8,6 +8,7 @@ import torch
 SEED = 42
 random.seed(SEED)
 np.random.seed(SEED)
+torch.manual_seed(SEED)
 
 env = gym.make("CartPole-v1")
 
@@ -18,7 +19,7 @@ action_dim = env.action_space.n
 
 agent = CartpoleAgent(state_dim, action_dim)
 
-episodes = 5000
+episodes = 4000
 episode_rewards = []
 
 for i in range(episodes):
@@ -47,7 +48,7 @@ for i in range(episodes):
 torch.save(agent.q_network.state_dict(), "trained_model.pth")
 
 # --- MATPLOTLIB PLOT ---
-window_size = 200  # Window size for calculating the moving average
+window_size = 500  # Window size for calculating the moving average
 
 # Compute rolling average using 1D convolution
 rolling_avg = np.convolve(episode_rewards, np.ones(window_size) / window_size, mode='valid')
