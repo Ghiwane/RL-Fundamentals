@@ -22,14 +22,17 @@ class CartpoleAgent():
         self.eps_decay = 0.999
         self.batch_size = 64
         self.n_actions = action
+        self.n_step = 0
+        self.target_update_freq = 250
 
     def choose_action(self, state):
             rand_nb = np.random.rand()
             if rand_nb < self.eps:
                 return random.choice(range(self.n_actions))
             else:
-                state_tensor = torch.tensor(state)
-                return self.q_network(state_tensor).argmax().item()
+                with torch.no_grad():
+                    state_tensor = torch.tensor(state)
+                    return self.q_network(state_tensor).argmax().item()
 
     def train_step(self):
         if len(self.buffer) < self.batch_size:
@@ -39,14 +42,19 @@ class CartpoleAgent():
         selected_q_values = q_values.gather(1, actions)
 
         with torch.no_grad():
-            target = rewards + self.gamma * self.target_network(next_states).max(dim=1)[0] * (1 - dones)
-            target = target.unsqueeze(1)
+            target = rewards + self.gamma * self.target_network(next_states).max(dim=1, keepdim=True)[0] * (1 - dones.float())
 
         loss = F.mse_loss(selected_q_values, target)
+
+        self.n_step += 1 
+        if self.n_step % self.target_update_freq == 0:
+            self.update_target()
 
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+
+        return loss.item()
 
     def update_target(self):
         self.target_network.load_state_dict(self.q_network.state_dict())
