@@ -16,14 +16,14 @@ class CartpoleAgent():
 
         self.buffer = ReplayBuffer(capacity=10000)
 
-        self.gamma = 0.95
+        self.gamma = 0.99
         self.eps = 1.0 
         self.eps_min = 0.1
         self.eps_decay = 0.999
         self.batch_size = 64
         self.n_actions = action
         self.n_step = 0
-        self.target_update_freq = 250
+        self.target_update_freq = 500
 
     def choose_action(self, state):
             rand_nb = np.random.rand()
@@ -42,8 +42,9 @@ class CartpoleAgent():
         selected_q_values = q_values.gather(1, actions)
 
         with torch.no_grad():
-            target = rewards + self.gamma * self.target_network(next_states).max(dim=1, keepdim=True)[0] * (1 - dones.float())
-
+            best_actions = self.q_network(next_states).argmax(dim=1, keepdim=True)
+            max_next_q = self.target_network(next_states).gather(1, best_actions)
+            target = rewards + self.gamma * max_next_q * (1 - dones.float())
         loss = F.mse_loss(selected_q_values, target)
 
         self.n_step += 1 
