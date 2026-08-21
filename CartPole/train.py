@@ -22,6 +22,9 @@ agent = CartpoleAgent(state_dim, action_dim)
 episodes = 6000
 episode_rewards = []
 
+best_eval_reward = -float('inf')
+eval_freq = 100  
+
 for i in range(episodes):
     state, _ = env.reset()
     total_rewards = 0
@@ -38,6 +41,13 @@ for i in range(episodes):
 
     agent.decay_epsilon()
     episode_rewards.append(total_rewards)
+    if i % eval_freq == 0:
+        eval_reward = agent.evaluate(env, n_episodes=10)
+        print(f'Episode eval {i} : {eval_reward:.1f}')
+        if eval_reward > best_eval_reward:
+            best_eval_reward = eval_reward
+            torch.save(agent.q_network.state_dict(), "trained_model.pth")
+            print(f'New best model saved ({eval_reward:.1f})')
 
     if i % 20 == 0:
             print(f'Episode : {i} | Reward : {total_rewards} | Current epsilon : {agent.eps}')
@@ -45,7 +55,6 @@ for i in range(episodes):
     if i % 20 == 0:
         print(f"Loss: {loss}")
 
-torch.save(agent.q_network.state_dict(), "trained_model.pth")
 
 # --- MATPLOTLIB PLOT ---
 window_size = 500  # Window size for calculating the moving average
