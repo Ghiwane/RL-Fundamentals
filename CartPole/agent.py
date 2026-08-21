@@ -18,12 +18,13 @@ class CartpoleAgent():
 
         self.gamma = 0.99
         self.eps = 1.0 
-        self.eps_min = 0.1
+        self.eps_min = 0.01
         self.eps_decay = 0.999
         self.batch_size = 64
         self.n_actions = action
         self.n_step = 0
-        self.target_update_freq = 500
+        self.target_update_freq = 1000
+        self.train_nstep = 4
 
     def choose_action(self, state):
             rand_nb = np.random.rand()
@@ -31,31 +32,33 @@ class CartpoleAgent():
                 return random.choice(range(self.n_actions))
             else:
                 with torch.no_grad():
-                    state_tensor = torch.tensor(state)
+                    state_tensor = torch.FloatTensor(state)
                     return self.q_network(state_tensor).argmax().item()
 
     def train_step(self):
-        if len(self.buffer) < self.batch_size:
-            return
-        states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size)
-        q_values = self.q_network(states)
-        selected_q_values = q_values.gather(1, actions)
-
-        with torch.no_grad():
-            best_actions = self.q_network(next_states).argmax(dim=1, keepdim=True)
-            max_next_q = self.target_network(next_states).gather(1, best_actions)
-            target = rewards + self.gamma * max_next_q * (1 - dones.float())
-        loss = F.mse_loss(selected_q_values, target)
-
         self.n_step += 1 
-        if self.n_step % self.target_update_freq == 0:
-            self.update_target()
+        if self.n_step % self.train_nstep == 0:
+            if len(self.buffer) < self.batch_size:
+                return
+            states, actions, rewards, next_states, dones = self.buffer.sample(self.batch_size)
+            q_values = self.q_network(states)
+            selected_q_values = q_values.gather(1, actions)
 
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
+            with torch.no_grad():
+                best_actions = self.q_network(next_states).argmax(dim=1, keepdim=True)
+                max_next_q = self.target_network(next_states).gather(1, best_actions)
+                target = rewards + self.gamma * max_next_q * (1 - dones.float())
+            loss = F.mse_loss(selected_q_values, target)
 
-        return loss.item()
+            if self.n_step % self.target_update_freq == 0:
+                self.update_target()
+
+            self.optimizer.zero_grad()
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(self.q_network.parameters(), max_norm=100)
+            self.optimizer.step()
+
+            return loss.item()
 
     def update_target(self):
         self.target_network.load_state_dict(self.q_network.state_dict())
