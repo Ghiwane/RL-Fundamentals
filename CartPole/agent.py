@@ -65,3 +65,19 @@ class CartpoleAgent():
 
     def decay_epsilon(self):
         self.eps = max(self.eps_min, self.eps * self.eps_decay)
+
+    def evaluate(self, env, n_episodes=10):
+        total_rewards = []
+        for _ in range(n_episodes):
+            state, _ = env.reset()
+            done = False
+            episode_reward = 0
+            while not done:
+                with torch.no_grad():
+                    state_tensor = torch.FloatTensor(state)
+                    action = self.q_network(state_tensor).argmax().item()
+                state, reward, terminated, truncated, info = env.step(action)
+                done = terminated or truncated
+                episode_reward += reward
+            total_rewards.append(episode_reward)
+        return np.mean(total_rewards)
