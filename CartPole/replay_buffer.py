@@ -19,8 +19,8 @@ class ReplayBuffer():
 
         states = torch.FloatTensor(np.array(states))
         actions = torch.LongTensor(actions).unsqueeze(1)
-        rewards = torch.tensor(rewards).unsqueeze(1)
-        next_states = torch.tensor(np.array(next_states))
+        rewards = torch.FloatTensor(rewards).unsqueeze(1)
+        next_states = torch.FloatTensor(np.array(next_states))
         dones = torch.tensor(dones, dtype=torch.float32).unsqueeze(1)
         
         return states, actions, rewards, next_states, dones
