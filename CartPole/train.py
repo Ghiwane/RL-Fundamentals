@@ -19,7 +19,7 @@ action_dim = env.action_space.n
 
 agent = CartpoleAgent(state_dim, action_dim)
 
-episodes = 4000
+episodes = 6000
 episode_rewards = []
 
 for i in range(episodes):
@@ -39,10 +39,10 @@ for i in range(episodes):
     agent.decay_epsilon()
     episode_rewards.append(total_rewards)
 
-    if i % 200 == 0:
+    if i % 20 == 0:
             print(f'Episode : {i} | Reward : {total_rewards} | Current epsilon : {agent.eps}')
 
-    if i % 200 == 0:
+    if i % 20 == 0:
         print(f"Loss: {loss}")
 
 torch.save(agent.q_network.state_dict(), "trained_model.pth")
