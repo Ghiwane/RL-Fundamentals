@@ -89,7 +89,7 @@ Une observation initiale du modèle en démonstration (`demo.py`) donnait l'impr
 
 ![Courbe d'entraînement CartPole sur 15000 épisodes](training_curve.png)
 
-*Moyenne glissante (bleu foncé) sur 500 épisodes, superposée aux rewards bruts par épisode (bande bleu clair). On observe que l'oscillation entre phases de bonne et moins bonne performance persiste même après 15000 épisodes — d'où l'importance du mécanisme d'évaluation et de sauvegarde du meilleur modèle plutôt que de compter sur une convergence stable de l'entraînement.*
+*Moyenne glissante (bleu foncé) sur 500 épisodes, superposée aux rewards bruts par épisode (bande bleu clair). On observe que l'oscillation entre phases de bonne et moins bonne performance persiste même après 15000 épisodes d'où l'importance du mécanisme d'évaluation et de sauvegarde du meilleur modèle plutôt que de compter sur une convergence stable de l'entraînement.*
 
 ## Modèle final
 
