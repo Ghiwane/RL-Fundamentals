@@ -85,6 +85,12 @@ Une observation initiale du modèle en démonstration (`demo.py`) donnait l'impr
 
 **Résultat** : l'agent corrige immédiatement dans la bonne direction face à ce nouvel état, confirmant qu'il réagit bien à l'état observé et non à une règle fixe mémorisée. Cependant, en forçant un angle important sans vitesse angulaire cohérente (une combinaison d'état jamais rencontrée en conditions normales, où `env.reset()` ne génère qu'un bruit initial très faible), l'agent peut ensuite perdre le contrôle plus loin dans l'épisode : signe attendu et normal qu'un réseau de neurones généralise moins bien en dehors de la distribution des états rencontrés à l'entraînement, pas un défaut d'implémentation.
 
+## Courbe d'entraînement
+
+![Courbe d'entraînement CartPole sur 15000 épisodes](training_curve.png)
+
+*Moyenne glissante (bleu foncé) sur 500 épisodes, superposée aux rewards bruts par épisode (bande bleu clair). On observe que l'oscillation entre phases de bonne et moins bonne performance persiste même après 15000 épisodes — d'où l'importance du mécanisme d'évaluation et de sauvegarde du meilleur modèle plutôt que de compter sur une convergence stable de l'entraînement.*
+
 ## Modèle final
 
 Le modèle actuellement sauvegardé (`best_model.pth`) atteint la récompense maximale de 500 sur `CartPole-v1`, y compris lorsqu'il est confronté à des conditions de départ légèrement forcées et différentes de la distribution d'entraînement standard, ce qui indique une politique généralisant correctement sur l'ensemble de l'espace d'états pertinent du problème.
